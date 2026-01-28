@@ -1,0 +1,158 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prometric Practice Test</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f9f9f9; padding:20px; }
+.container { max-width:720px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,.1);}
+h1{text-align:center;}
+.question{font-weight:bold;margin-bottom:15px;}
+.options button{width:100%;padding:10px;margin:6px 0;text-align:left;border-radius:5px;border:1px solid #ccc;background:#f0f0f0;cursor:pointer;}
+.options button:hover{background:#e0e0e0;}
+.feedback{margin-top:10px;font-weight:bold;}
+.next-btn,.start-btn{margin-top:20px;padding:10px 20px;border:none;border-radius:5px;background:#007bff;color:#fff;cursor:pointer;}
+input{width:100%;padding:10px;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Prometric Practice Test</h1>
+
+<div id="nameScreen">
+<label>Enter Your Name:</label>
+<input id="takerName" placeholder="Your Name">
+<button class="start-btn" id="startBtn">Start Test</button>
+</div>
+
+<div id="quiz" style="display:none;">
+<div id="question" class="question"></div>
+<div id="options" class="options"></div>
+<div id="feedback" class="feedback"></div>
+<button id="nextBtn" class="next-btn">Next</button>
+</div>
+
+<div id="result" style="display:none;">
+<h2>Test Result</h2>
+<p>Name: <span id="displayName"></span></p>
+<p>Score: <span id="score"></span> / <span id="total"></span></p>
+</div>
+</div>
+
+<script>
+const questions_hard3 = [
+{q:"Ventilated ICU patient sudden hypotension high peak pressure absent breath sounds on right. Immediate action?",o:["Needle decompression","Increase FiO2","Administer fluid bolus","Obtain chest X-ray"],a:0},
+{q:"Septic shock patient ScvO2 remains <65% despite fluids and vasopressors. Next intervention?",o:["Transfuse packed RBC","Increase norepinephrine","Add diuretic","Decrease sedation"],a:0},
+{q:"ARDS patient plateau pressure rises above 30 cmH2O. Best adjustment?",o:["Reduce tidal volume","Increase PEEP","Increase respiratory rate","Switch to pressure support"],a:0},
+{q:"Post-cardiac arrest patient develops myoclonic jerks within 24 hours. Prognosis indicator?",o:["Poor neurologic outcome","Favorable recovery","Medication reaction","Electrolyte imbalance"],a:0},
+{q:"ICU patient on heparin develops thrombosis and platelet drop >50%. Diagnosis?",o:["HIT type II","DIC","ITP","TTP"],a:0},
+{q:"Massive transfusion patient develops hypothermia bleeding acidosis. Primary priority?",o:["Active warming","Platelet transfusion","Calcium replacement","Stop transfusion"],a:0},
+{q:"Ventilated patient sudden drop in EtCO2 and hypotension. Most likely cause?",o:["Pulmonary embolism","Ventilator disconnection","Bronchospasm","ARDS progression"],a:0},
+{q:"Septic patient develops acute kidney injury with oliguria. Urine sodium low. Type?",o:["Pre-renal failure","Intrinsic renal","Post-renal","Chronic renal"],a:0},
+{q:"Patient with intracranial hemorrhage BP spikes to 220 systolic. Goal?",o:["Prevent rebleeding","Increase cerebral perfusion","Normalize BP immediately","Induce hypotension"],a:0},
+{q:"Severe metabolic acidosis pH 7.05 lactate 9. Primary cause?",o:["Tissue hypoperfusion","Renal compensation failure","Respiratory failure","Electrolyte imbalance"],a:0},
+
+{q:"Ventilated ICU patient sudden ventilator alarm high pressure biting tube. Immediate fix?",o:["Insert bite block","Increase sedation","Switch ventilator mode","Decrease tidal volume"],a:0},
+{q:"Neuro ICU patient urine output 600 mL/hr sodium 152. Diagnosis?",o:["Diabetes insipidus","SIADH","Osmotic diuresis","Acute kidney injury"],a:0},
+{q:"Severe pancreatitis patient hypotensive with third spacing. Fluid choice?",o:["Aggressive isotonic crystalloids","Albumin first","Hypotonic fluids","Restrict fluids"],a:0},
+{q:"Post-intubation ICU patient sudden hypotension. Most common cause?",o:["Decreased venous return","Anaphylaxis","Pneumothorax","Sepsis"],a:0},
+{q:"ECMO patient sudden loss of circuit flow. First check?",o:["Cannula position","Increase anticoagulation","Administer fluids","Change oxygenator"],a:0},
+{q:"Septic shock patient requires escalating vasopressors. Indicator of poor prognosis?",o:["Rising lactate","Improving urine output","Stable MAP","Normal ABG"],a:0},
+{q:"ICU patient with DIC expected lab finding?",o:["Low fibrinogen","High platelets","Short PT","Normal D-dimer"],a:0},
+{q:"Ventilator-associated pneumonia prevention includes?",o:["Daily sedation interruption","Routine antibiotics","Supine positioning","Frequent ventilator changes"],a:0},
+{q:"Patient on CRRT develops hypotension. First nursing action?",o:["Decrease ultrafiltration","Administer vasopressor","Stop anticoagulant","Increase dialysate flow"],a:0},
+{q:"Massive PE patient obstructive shock mechanism?",o:["Impaired RV outflow","LV failure","Hypovolemia","Vagal response"],a:0},
+
+{q:"Neuro ICU patient sudden unilateral pupil dilation. Immediate concern?",o:["Brain herniation","Stroke","Medication effect","Seizure"],a:0},
+{q:"ARDS patient prone positioning benefit?",o:["Improves oxygenation","Decreases CO2","Reduces sedation","Lowers PEEP need"],a:0},
+{q:"Septic patient develops refractory hypoglycemia. Mechanism?",o:["Hepatic dysfunction","Insulin overdose","Renal failure","Poor intake"],a:0},
+{q:"Patient with cardiogenic shock wedge pressure high cardiac output low. Best drug?",o:["Inotrope","Diuretic","Vasodilator","Beta blocker"],a:0},
+{q:"Post-op ICU patient develops sudden hypercapnia despite stable ventilator. Cause?",o:["Increased dead space","Ventilator failure","Low FiO2","Fluid overload"],a:0},
+{q:"Severe traumatic brain injury recommended CPP target?",o:["60–70 mmHg","40–50 mmHg",">90 mmHg","Any MAP acceptable"],a:0},
+{q:"ICU patient with rhabdomyolysis primary renal protective measure?",o:["Aggressive IV fluids","Diuretics","Dialysis early","Fluid restriction"],a:0},
+{q:"Mechanical ventilation low tidal volume rationale?",o:["Reduce barotrauma","Improve CO2 removal","Increase lung expansion","Decrease sedation"],a:0},
+{q:"Septic shock patient with persistent acidosis despite fluids. Next focus?",o:["Source control","Increase bicarbonate","More fluids","Change antibiotics only"],a:0},
+{q:"Post-cardiac surgery patient sudden hypotension equalized diastolic pressures. Cause?",o:["Cardiac tamponade","RV infarction","Septic shock","Hypovolemia"],a:0},
+
+{q:"ICU patient develops sudden fever rigidity autonomic instability after antipsychotic. Diagnosis?",o:["Neuroleptic malignant syndrome","Serotonin syndrome","Sepsis","Malignant hyperthermia"],a:0},
+{q:"Septic patient acute lung injury with normal wedge pressure. Diagnosis?",o:["ARDS","Cardiogenic edema","Volume overload","Pulmonary embolism"],a:0},
+{q:"Ventilator alarm low minute ventilation sounding. Likely cause?",o:["Apnea","High secretions","Bronchospasm","High PEEP"],a:0},
+{q:"Patient with liver failure develops cerebral edema. Contributing factor?",o:["Hyperammonemia","Hypoglycemia","Hypokalemia","Respiratory alkalosis"],a:0},
+{q:"ICU patient on vasopressors cool mottled skin. Interpretation?",o:["Poor peripheral perfusion","Adequate circulation","Allergic reaction","Normal response"],a:0},
+{q:"Status epilepticus patient not responding to benzodiazepines. Next drug?",o:["Phenytoin","Acetaminophen","Naloxone","Propofol bolus only"],a:0},
+{q:"Post-intubation right mainstem intubation sign?",o:["Absent left breath sounds","High blood pressure","Hypothermia","Improved oxygenation"],a:0},
+{q:"Massive GI bleed patient shock index elevated. Meaning?",o:["Severe hypovolemia","Cardiogenic shock","Septic shock","Neurogenic shock"],a:0},
+{q:"ICU patient with acute adrenal crisis hypotension unresponsive to fluids. Treat with?",o:["Hydrocortisone","Insulin","Vasodilator","Diuretic"],a:0},
+{q:"Patient with sepsis-induced ARDS best PaO2 target?",o:["55–80 mmHg",">100 mmHg","90–100 mmHg","Any value acceptable"],a:0},
+
+{q:"ICU patient sudden drop hemoglobin no external bleeding. Suspect?",o:["Internal hemorrhage","Hemodilution","Lab error","Hemolysis"],a:0},
+{q:"Ventilated patient auto-PEEP suspected. Management?",o:["Increase expiratory time","Increase respiratory rate","Increase tidal volume","Add sedation only"],a:0},
+{q:"Septic shock patient develops acute myocardial depression. Echo shows low EF. Term?",o:["Septic cardiomyopathy","Ischemic cardiomyopathy","Stress cardiomyopathy","Chronic heart failure"],a:0},
+{q:"ICU patient with severe lactic acidosis best indicator of improvement?",o:["Lactate clearance","Normalized pH","Stable blood pressure","Improved urine color"],a:0},
+{q:"Post-op ICU patient sudden hypotension after epidural bolus. Cause?",o:["Sympathetic blockade","Anaphylaxis","Bleeding","Cardiac ischemia"],a:0},
+{q:"Severe hyperkalemia refractory ECG changes. Definitive therapy?",o:["Hemodialysis","Insulin infusion","Calcium gluconate","Sodium bicarbonate"],a:0},
+{q:"ICU patient ventilator dyssynchrony despite sedation. Next step?",o:["Neuromuscular blockade","Increase FiO2","Decrease PEEP","Change circuit"],a:0},
+{q:"Post-resuscitation patient targeted temperature management goal duration?",o:["At least 24 hours","6 hours","12 hours","Until awakening"],a:0},
+{q:"ICU patient develops sudden hypoxemia after central line placement. Cause?",o:["Pneumothorax","Air embolism","Pulmonary edema","Atelectasis"],a:0},
+{q:"Septic shock patient vasopressor extravasation injury risk drug?",o:["Norepinephrine","Dobutamine","Dopamine","Epinephrine infusion only"],a:0}
+];
+
+
+
+// shuffle
+function shuffleQuestion(q){
+  const o=[...q.o];const c=o[q.a];
+  for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]];}
+  return {...q,o,a:o.indexOf(c)};
+}
+
+let shuffled=questions.map(shuffleQuestion);
+let i=0,score=0,name="";
+
+function showQ(){
+  const q=shuffled[i];
+  question.innerText=`Q${i+1}. ${q.q}`;
+  options.innerHTML="";
+  q.o.forEach((t,x)=>{
+    const b=document.createElement("button");
+    b.innerText=String.fromCharCode(65+x)+". "+t;
+    b.onclick=()=>check(x);
+    options.appendChild(b);
+  });
+  feedback.innerText="";
+}
+
+function check(x){
+  const q=shuffled[i];
+  if(x===q.a){feedback.innerText="Correct";feedback.style.color="green";score++;}
+  else{feedback.innerText="Wrong. Correct: "+q.o[q.a];feedback.style.color="red";}
+  nextBtn.style.display="block";
+}
+
+nextBtn.onclick=()=>{
+  i++;
+  if(i<shuffled.length){showQ();nextBtn.style.display="none";}
+  else{
+    quiz.style.display="none";
+    result.style.display="block";
+    displayName.innerText=name;
+    scoreSpan.innerText=score;
+    total.innerText=shuffled.length;
+  }
+};
+
+startBtn.onclick=()=>{
+  if(!takerName.value.trim()) return alert("Enter name");
+  name=takerName.value;
+  nameScreen.style.display="none";
+  quiz.style.display="block";
+  nextBtn.style.display="none";
+  showQ();
+};
+</script>
+</body>
+</html>
